@@ -1,0 +1,42 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.x  # Specify the Python version you need
+    commands:
+      - echo "Installing Terraform"
+      - curl -LO "https://releases.hashicorp.com/terraform/$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r .current_version)/terraform_$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r .current_version)_linux_amd64.zip"
+      - unzip terraform_*.zip
+      - sudo mv terraform /usr/local/bin/
+      - terraform version
+      - echo "Terraform installed successfully"
+
+  pre_build:
+    commands:
+      - echo "Logging in to Amazon ECR"
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)  # Assumes AWS credentials are set up in CodeBuild
+      - echo "Initializing Terraform"
+      - cd terraform  # Change to the directory containing your Terraform configuration
+      - terraform init
+      - echo "Planning Terraform changes"
+      - terraform plan -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME"
+      - echo "Applying Terraform changes"
+      - terraform apply -auto-approve -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME"
+
+  build:
+    commands:
+      - echo "Building Docker image"
+      - docker build -t $ECR_REPOSITORY_NAME ./app  # Adjust path if needed
+      - echo "Tagging Docker image"
+      - docker tag $ECR_REPOSITORY_NAME:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:latest
+
+  post_build:
+    commands:
+      - echo "Pushing Docker image to Amazon ECR"
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:latest
+      - echo "Docker image pushed to ECR successfully"
+
+artifacts:
+  files:
+    - '**/*'  # Include any other files you want to keep as build artifacts
