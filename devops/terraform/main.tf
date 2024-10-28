@@ -5,7 +5,7 @@ terraform {
   backend "s3" {
     bucket = "ecs-deployment-terraform-statefile"  # Replace with your S3 bucket name
     key    = "terraform/state"        # Path to the state file in the bucket
-    region = var.aws_region           # Use the variable for region
+    region = us-east-1        # Use the variable for region
   }
 }
 
