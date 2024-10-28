@@ -30,7 +30,7 @@ phases:
       - echo "Building Docker image"
       - ls -al
       - pwd
-      - docker build -t $ECR_REPOSITORY_NAME .
+      - docker build -t $ECR_REPOSITORY_NAME -f ../../src/Dockerfile ../../src
       - echo "Tagging Docker image"
       - docker tag $ECR_REPOSITORY_NAME:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:latest
 
