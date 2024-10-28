@@ -14,10 +14,10 @@ phases:
 
   pre_build:
     commands:
-      - echo "Logging in to Amazon ECR"
-      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)  # Assumes AWS credentials are set up in CodeBuild
+      # - echo "Logging in to Amazon ECR"
+      # - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)  # Assumes AWS credentials are set up in CodeBuild
       - echo "Initializing Terraform"
-      - cd terraform  # Change to the directory containing your Terraform configuration
+      - cd devops/terraform  # Change to the directory containing your Terraform configuration
       - terraform init
       - echo "Planning Terraform changes"
       - terraform plan -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME"
