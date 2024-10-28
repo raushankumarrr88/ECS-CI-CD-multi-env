@@ -27,15 +27,16 @@ phases:
     commands:
       - echo "Building Docker image"
       - pwd
-      - docker build -t $ECR_REPOSITORY_NAME -f ../../Dockerfile
-      - pwd
+      - cd ../..
+      - docker build -t $ECR_REPOSITORY_NAME:latest .
+      - cd devops/terraform
       - echo "Tagging Docker image"
       - docker tag $ECR_REPOSITORY_NAME:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:latest
 
   post_build:
     commands:
       - echo "Logging in to Amazon ECR"
-      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)  # Assumes AWS credentials are set up in CodeBuild
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - echo "Pushing Docker image to Amazon ECR"
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:latest
       - echo "Docker image pushed to ECR successfully"
