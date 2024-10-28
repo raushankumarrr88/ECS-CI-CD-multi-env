@@ -18,7 +18,8 @@ phases:
       # - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)  # Assumes AWS credentials are set up in CodeBuild
       - echo "Initializing Terraform"
       - cd devops/terraform  # Change to the directory containing your Terraform configuration
-      - terraform init
+      - printenv
+      - terraform init -backend-config="region=$AWS_DEFAULT_REGION"
       - echo "Planning Terraform changes"
       - terraform plan -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME"
       - echo "Applying Terraform changes"
