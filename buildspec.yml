@@ -20,9 +20,9 @@ phases:
       - cd devops/terraform  # Change to the directory containing your Terraform configuration
       - terraform init -backend-config="region=$AWS_DEFAULT_REGION"
       - echo "Planning Terraform changes"
-      - terraform plan -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME"
+      - terraform plan -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID" 
       - echo "Applying Terraform changes"
-      - terraform apply -auto-approve -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME"
+      - terraform apply -auto-approve -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID"
 
   build:
     commands:
