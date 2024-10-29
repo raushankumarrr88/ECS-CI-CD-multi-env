@@ -5,6 +5,8 @@ phases:
     runtime-versions:
       python: 3.x  # Specify the Python version you need
     commands:
+      - echo "this pipeline has the below role"
+      - aws sts get-caller-identity
       - echo "Installing Terraform"
       - curl -LO "https://releases.hashicorp.com/terraform/$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r .current_version)/terraform_$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r .current_version)_linux_amd64.zip"
       - unzip terraform_*.zip
