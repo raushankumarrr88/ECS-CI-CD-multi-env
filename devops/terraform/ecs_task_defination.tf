@@ -8,7 +8,7 @@ resource "aws_ecs_task_definition" "staging_task" {
 
   container_definitions = jsonencode([{
     name      = "staging-container"
-    image     = "${aws_account_id}.dkr.ecr.${aws_region}.amazonaws.com/${var.ecr_repository_name}:latest"
+    image     = "${var.aws_account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.ecr_repository_name}:latest"
     essential = true
     portMappings = [{
       containerPort = 80
@@ -27,7 +27,7 @@ resource "aws_ecs_task_definition" "production_task" {
 
   container_definitions = jsonencode([{
     name      = "production-container"
-    image     = "${aws_account_id}.dkr.ecr.${aws_region}.amazonaws.com/${var.ecr_repository_name}:latest"
+    image     = "${var.aws_account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.ecr_repository_name}:latest"
     essential = true
     portMappings = [{
       containerPort = 80
