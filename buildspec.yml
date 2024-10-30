@@ -19,18 +19,22 @@ phases:
       - echo "Initializing Terraform"
       - cd devops/terraform  # Change to the directory containing your Terraform configuration
       - terraform init -backend-config="region=$AWS_DEFAULT_REGION"
-      - echo "Planning Terraform changes"
-      - terraform plan -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID" 
-      - echo "Applying Terraform changes"
-      - terraform apply -auto-approve -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID"
+      - if [ "$DESTROY_RESOURCES" = "true" ]; then
+          echo "Destroying Terraform infrastructure";
+          terraform destroy -auto-approve -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID";
+        else
+          echo "Planning Terraform changes";
+          terraform plan -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID"; 
+          echo "Applying Terraform changes";
+          terraform apply -auto-approve -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID";
+        fi
 
   build:
     commands:
       - echo "Logging in to Amazon ECR"
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-      - echo "Pushing Docker image to Amazon ECR"
       - echo "Building Docker image"
-      - cd ../..
+      - cd ../..  # Navigate to the directory containing the Dockerfile
       - docker build -t $ECR_REPOSITORY_NAME:latest .
       - cd devops/terraform
       - echo "Tagging Docker image"
