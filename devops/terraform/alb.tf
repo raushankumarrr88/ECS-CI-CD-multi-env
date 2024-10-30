@@ -7,7 +7,6 @@ resource "aws_lb" "production_alb" {
   subnets            = [aws_subnet.production_subnet_1.id, aws_subnet.production_subnet_2.id]  # Updated to include both subnets
 }
 
-
 # Staging Load Balancer
 resource "aws_lb" "staging_alb" {
   name               = "staging-alb"
@@ -16,7 +15,6 @@ resource "aws_lb" "staging_alb" {
   security_groups    = [aws_security_group.staging_sg.id]
   subnets            = [aws_subnet.staging_subnet_1.id, aws_subnet.staging_subnet_2.id]  # Updated to include both subnets
 }
-
 
 # Target Group for Production
 resource "aws_lb_target_group" "production_tg" {
@@ -71,7 +69,7 @@ resource "aws_lb_listener" "staging_http_listener" {
 # Listener Rule for Production
 resource "aws_lb_listener_rule" "production_listener_rule" {
   listener_arn = aws_lb_listener.production_http_listener.arn
-  priority     = 1
+  priority     = 100  # Unique priority
 
   action {
     type             = "forward"
@@ -88,7 +86,7 @@ resource "aws_lb_listener_rule" "production_listener_rule" {
 # Listener Rule for Staging
 resource "aws_lb_listener_rule" "staging_listener_rule" {
   listener_arn = aws_lb_listener.staging_http_listener.arn
-  priority     = 1
+  priority     = 200  # Unique priority
 
   action {
     type             = "forward"
