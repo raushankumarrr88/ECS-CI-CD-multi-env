@@ -13,8 +13,8 @@ resource "aws_ecs_service" "production_service" {
   }
   load_balancer {
     target_group_arn = aws_lb_target_group.production_tg.arn
-    container_name   = "production-container"  # Replace with the container name
-    container_port   = 80                      # Replace with the container port
+    container_name   = "production-container"
+    container_port   = 80
   }
 }
 
@@ -33,7 +33,7 @@ resource "aws_ecs_service" "staging_service" {
   }
   load_balancer {
     target_group_arn = aws_lb_target_group.staging_tg.arn
-    container_name   = "staging-container"  # Replace with the container name
-    container_port   = 80                   # Replace with the container port
+    container_name   = "staging-container"
+    container_port   = 80
   }
 }
