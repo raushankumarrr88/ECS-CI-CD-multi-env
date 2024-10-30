@@ -58,9 +58,4 @@ resource "aws_ecs_service" "dev_service" {
     assign_public_ip = true
   }
 
-  load_balancer {
-    target_group_arn = aws_lb_target_group.dev_tg.arn
-    container_name   = "dev-container"
-    container_port   = 80
-  }
 }
