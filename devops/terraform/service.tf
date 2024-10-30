@@ -7,16 +7,18 @@ resource "aws_ecs_service" "production_service" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets          = [aws_subnet.production_subnet.id]
+    subnets          = [aws_subnet.production_subnet_1.id, aws_subnet.production_subnet_2.id]  # Updated to include both subnets
     security_groups  = [aws_security_group.production_sg.id]
     assign_public_ip = true
   }
+
   load_balancer {
     target_group_arn = aws_lb_target_group.production_tg.arn
     container_name   = "production-container"
     container_port   = 80
   }
 }
+
 
 # ECS Service for Staging
 resource "aws_ecs_service" "staging_service" {
@@ -27,10 +29,11 @@ resource "aws_ecs_service" "staging_service" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets          = [aws_subnet.staging_subnet.id]
+    subnets          = [aws_subnet.staging_subnet_1.id, aws_subnet.staging_subnet_2.id]  # Updated to include both subnets
     security_groups  = [aws_security_group.staging_sg.id]
     assign_public_ip = true
   }
+
   load_balancer {
     target_group_arn = aws_lb_target_group.staging_tg.arn
     container_name   = "staging-container"

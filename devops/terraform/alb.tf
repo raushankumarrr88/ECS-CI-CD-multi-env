@@ -4,8 +4,9 @@ resource "aws_lb" "production_alb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.production_sg.id]
-  subnets            = [aws_subnet.production_subnet.id]
+  subnets            = [aws_subnet.production_subnet_1.id, aws_subnet.production_subnet_2.id]  # Updated to include both subnets
 }
+
 
 # Staging Load Balancer
 resource "aws_lb" "staging_alb" {
@@ -13,8 +14,9 @@ resource "aws_lb" "staging_alb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.staging_sg.id]
-  subnets            = [aws_subnet.staging_subnet.id]
+  subnets            = [aws_subnet.staging_subnet_1.id, aws_subnet.staging_subnet_2.id]  # Updated to include both subnets
 }
+
 
 # Target Group for Production
 resource "aws_lb_target_group" "production_tg" {
