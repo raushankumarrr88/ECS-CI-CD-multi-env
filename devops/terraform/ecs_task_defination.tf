@@ -32,8 +32,7 @@ resource "aws_ecs_task_definition" "production_task" {
   container_definitions = jsonencode([
     {
       name         = "production-container"
-    # image        = "${var.aws_account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.ecr_repository_name}:latest"
-      image        = "nginx:latest"
+      image        = "${var.aws_account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.ecr_repository_name}:latest"
       essential    = true
       portMappings = [
         {
@@ -74,5 +73,3 @@ resource "aws_ecs_task_definition" "staging_task" {
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
 }
-
-# Include other resources as needed

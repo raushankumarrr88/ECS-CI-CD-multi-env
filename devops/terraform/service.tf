@@ -7,7 +7,7 @@ resource "aws_ecs_service" "production_service" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets          = [aws_subnet.production_subnet_1.id, aws_subnet.production_subnet_2.id]  # Updated to include both subnets
+    subnets          = [aws_subnet.production_subnet_1.id, aws_subnet.production_subnet_2.id]  
     security_groups  = [aws_security_group.production_sg.id]
     assign_public_ip = true
   }
@@ -29,7 +29,7 @@ resource "aws_ecs_service" "staging_service" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets          = [aws_subnet.staging_subnet_1.id, aws_subnet.staging_subnet_2.id]  # Updated to include both subnets
+    subnets          = [aws_subnet.staging_subnet_1.id, aws_subnet.staging_subnet_2.id]
     security_groups  = [aws_security_group.staging_sg.id]
     assign_public_ip = true
   }
