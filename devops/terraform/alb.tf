@@ -4,7 +4,7 @@ resource "aws_lb" "production_alb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.production_sg.id]
-  subnets            = [aws_subnet.production_subnet_1.id, aws_subnet.production_subnet_2.id]  # Updated to include both subnets
+  subnets            = [aws_subnet.production_subnet_1.id, aws_subnet.production_subnet_2.id]  
 }
 
 # Staging Load Balancer
@@ -13,7 +13,7 @@ resource "aws_lb" "staging_alb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.staging_sg.id]
-  subnets            = [aws_subnet.staging_subnet_1.id, aws_subnet.staging_subnet_2.id]  # Updated to include both subnets
+  subnets            = [aws_subnet.staging_subnet_1.id, aws_subnet.staging_subnet_2.id]  
 }
 
 # Target Group for Production
@@ -78,7 +78,7 @@ resource "aws_lb_listener_rule" "production_listener_rule" {
 
   condition {
     path_pattern {
-      values = ["/production/*"]
+      values = ["/demo/*"]
     }
   }
 }
@@ -95,7 +95,7 @@ resource "aws_lb_listener_rule" "staging_listener_rule" {
 
   condition {
     path_pattern {
-      values = ["/staging/*"]
+      values = ["/demo/*"]
     }
   }
 }
