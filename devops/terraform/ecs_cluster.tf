@@ -13,3 +13,12 @@ resource "aws_ecs_cluster" "production_cluster" {
     Environment = "production"
   }
 }
+
+# ECS Cluster for Dev Environment
+resource "aws_ecs_cluster" "dev_cluster" {
+  name = "dev-ecs-cluster"
+  tags = {
+    Environment = "dev"
+  }
+}
+

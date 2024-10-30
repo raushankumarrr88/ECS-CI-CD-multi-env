@@ -16,6 +16,15 @@ resource "aws_lb" "staging_alb" {
   subnets            = [aws_subnet.staging_subnet_1.id, aws_subnet.staging_subnet_2.id]  
 }
 
+# dev Load Balancer
+resource "aws_lb" "dev_alb" {
+  name               = "dev-alb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.dev_sg.id]
+  subnets            = [aws_subnet.dev_subnet_1.id, aws_subnet.dev_subnet_2.id]  
+}
+
 # Target Group for Production
 resource "aws_lb_target_group" "production_tg" {
   name        = "production-tg"
@@ -78,7 +87,7 @@ resource "aws_lb_listener_rule" "production_listener_rule" {
 
   condition {
     path_pattern {
-      values = ["/demo/*"]
+      values = ["/*"]
     }
   }
 }
@@ -95,7 +104,7 @@ resource "aws_lb_listener_rule" "staging_listener_rule" {
 
   condition {
     path_pattern {
-      values = ["/demo/*"]
+      values = ["/*"]
     }
   }
 }

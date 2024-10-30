@@ -20,6 +20,16 @@ resource "aws_vpc" "production_vpc" {
   }
 }
 
+# Dev VPC
+resource "aws_vpc" "dev_vpc" {
+  cidr_block           = "10.2.0.0/16"
+  enable_dns_hostnames = true
+  enable_dns_support   = true
+  tags = {
+    Name = "dev-vpc"
+  }
+}
+
 # Step 2: Create Subnets for Each VPC
 
 # Staging Subnet 1
@@ -66,6 +76,29 @@ resource "aws_subnet" "production_subnet_2" {
   }
 }
 
+
+# dev Subnet 1
+resource "aws_subnet" "dev_subnet_1" {
+  vpc_id                 = aws_vpc.dev_vpc.id
+  cidr_block             = "10.2.1.0/24"
+  availability_zone      = "us-east-1a"
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "production-subnet-1"
+  }
+}
+
+# dev Subnet 2 (in a different AZ)
+resource "aws_subnet" "dev_subnet_2" {
+  vpc_id                 = aws_vpc.dev_vpc.id
+  cidr_block             = "10.2.2.0/24"
+  availability_zone      = "us-east-1b"
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "dev-subnet-2"
+  }
+}
+
 # Step 3: Create Internet Gateways
 
 # Staging Internet Gateway
@@ -81,6 +114,14 @@ resource "aws_internet_gateway" "production_igw" {
   vpc_id = aws_vpc.production_vpc.id
   tags = {
     Name = "production-igw"
+  }
+}
+
+# dev Internet Gateway
+resource "aws_internet_gateway" "dev_igw" {
+  vpc_id = aws_vpc.dev_vpc.id
+  tags = {
+    Name = "dev-igw"
   }
 }
 
@@ -110,6 +151,19 @@ resource "aws_route_table" "production_route_table" {
   }
 }
 
+
+# dev Route Table
+resource "aws_route_table" "dev_route_table" {
+  vpc_id = aws_vpc.dev_vpc.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.dev_igw.id
+  }
+  tags = {
+    Name = "dev-route-table"
+  }
+}
+
 # Associate Subnets with Route Tables
 
 resource "aws_route_table_association" "staging_association_1" {
@@ -130,4 +184,14 @@ resource "aws_route_table_association" "production_association_1" {
 resource "aws_route_table_association" "production_association_2" {
   subnet_id      = aws_subnet.production_subnet_2.id
   route_table_id = aws_route_table.production_route_table.id
+}
+
+resource "aws_route_table_association" "dev_association_1" {
+  subnet_id      = aws_subnet.dev_subnet_1.id
+  route_table_id = aws_route_table.dev_route_table.id
+}
+
+resource "aws_route_table_association" "dev_association_2" {
+  subnet_id      = aws_subnet.dev_subnet_2.id
+  route_table_id = aws_route_table.dev_route_table.id
 }
