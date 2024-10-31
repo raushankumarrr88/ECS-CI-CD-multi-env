@@ -61,4 +61,5 @@ resource "aws_ecs_service" "dev_service" {
     target_group_arn = aws_lb_target_group.dev_tg.arn
     container_name   = "dev-container"
     container_port   = 80
+  }
 }
