@@ -21,12 +21,12 @@ phases:
       - terraform init -backend-config="region=$AWS_DEFAULT_REGION"
       - if [ "$DESTROY_RESOURCES" = "true" ]; then
           echo "Destroying Terraform infrastructure";
-          terraform destroy -auto-approve -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID" -var="image_tag=$CODEBUILD_BUILD_ID";
+          terraform destroy -auto-approve -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID" -var="image_tag=${CODEBUILD_BUILD_ID//:/-}"; # Replace colons with dashes
         else
           echo "Planning Terraform changes";
-          terraform plan -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID" -var="image_tag=$CODEBUILD_BUILD_ID"; 
+          terraform plan -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID" -var="image_tag=${CODEBUILD_BUILD_ID//:/-}"; # Replace colons with dashes
           echo "Applying Terraform changes";
-          terraform apply -auto-approve -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID" -var="image_tag=$CODEBUILD_BUILD_ID";
+          terraform apply -auto-approve -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID" -var="image_tag=${CODEBUILD_BUILD_ID//:/-}"; # Replace colons with dashes
         fi
 
   build:
@@ -35,17 +35,15 @@ phases:
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - echo "Building Docker image"
       - cd ../..  # Navigate to the directory containing the Dockerfile
-      - docker build -t $ECR_REPOSITORY_NAME:$CODEBUILD_BUILD_ID .
-      - cd devops/terraform
+      - IMAGE_TAG="${CODEBUILD_BUILD_ID//:/-}"  # Replace colons with dashes for the tag
+      - docker build -t $ECR_REPOSITORY_NAME:$IMAGE_TAG .
       - echo "Tagging Docker image"
-      - docker tag $ECR_REPOSITORY_NAME:$CODEBUILD_BUILD_ID $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:$CODEBUILD_BUILD_ID
+      - docker tag $ECR_REPOSITORY_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:$IMAGE_TAG
 
   post_build:
     commands:
-      - echo "Logging in to Amazon ECR"
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - echo "Pushing Docker image to Amazon ECR"
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:$CODEBUILD_BUILD_ID
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:$IMAGE_TAG
       - echo "Docker image pushed to ECR successfully"
 
 artifacts:
