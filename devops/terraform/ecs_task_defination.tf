@@ -51,7 +51,7 @@ resource "aws_ecs_task_definition" "production_task" {
 
 
 # ECS Task Definition for Production
-resource "aws_ecs_task_definition" "production_task" {
+resource "aws_ecs_task_definition" "production_task-2" {
   family                   = "production-task"
   execution_role_arn      = aws_iam_role.ecs_task_execution_role.arn
 
