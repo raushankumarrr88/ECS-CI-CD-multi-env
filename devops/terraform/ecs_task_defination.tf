@@ -17,7 +17,7 @@ resource "aws_iam_role" "ecs_task_execution_role" {
   })
 }
 
-# Attach the AmazonECSTaskExecutionRolePolicy to the Role
+# Attach the AmazonECSTaskExecutionRolePolicy to the Rol
 resource "aws_iam_policy_attachment" "ecs_task_execution_policy" {
   name       = "ecsTaskExecutionPolicyAttachment"
   roles      = [aws_iam_role.ecs_task_execution_role.name]
@@ -48,6 +48,35 @@ resource "aws_ecs_task_definition" "production_task" {
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
 }
+
+
+# ECS Task Definition for Production
+resource "aws_ecs_task_definition" "production_task" {
+  family                   = "production-task"
+  execution_role_arn      = aws_iam_role.ecs_task_execution_role.arn
+
+  container_definitions = jsonencode([  
+    {
+      name         = "production-container-2"
+      image        = "nginx:latest"  # Updated to use image_tag
+      essential    = true
+      portMappings = [
+        {
+          containerPort = 80
+          hostPort      = 80
+        },
+      ]
+    },
+  ])
+  
+  cpu                      = "256"
+  memory                   = "512"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+}
+
+
+
 
 # ECS Task Definition for Staging
 resource "aws_ecs_task_definition" "staging_task" {
