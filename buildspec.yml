@@ -2,8 +2,6 @@ version: 0.2
 
 phases:
   install:
-    runtime-versions:
-      python: 3.x
     commands:
       - echo "this pipeline has the below role"
       - aws sts get-caller-identity
@@ -56,7 +54,4 @@ phases:
       - cat imagedefinitions.json
 
 artifacts:
-    commands:
-      - pwd
-      - ls -al
-    # files: imagedefinitions.json
+    files: imagedefinitions.json
