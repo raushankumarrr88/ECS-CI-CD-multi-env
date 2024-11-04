@@ -1,7 +1,4 @@
-# ECS-CI-CD-multi-env
-
-
-# Project Name
+# Project Name - ECS-CI-CD-multi-env
 
 ## Overview
 This project is designed to deploy and manage infrastructure using Terraform and Docker, leveraging AWS services like ECR, ALB, and CodeBuild. The repository contains Terraform configurations for creating AWS resources and a build pipeline to automate the build, push, and deployment of Docker containers.
@@ -119,7 +116,11 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Add any additional information specific to your setup, such as specific dependencies or troubleshooting tips.
 - Make sure that any sensitive information (such as actual account IDs or secrets) is either abstracted out or stored securely, not in the README.
 
+## Setup and Usage
 
-
+For using the project in your aws Account. Below are the steps:-
+1: Create a Pipeline IN AWS code Pipeline
+2: Create Three env Varibale int the build phase which will consist the AWS Account No, ECR Repo Name, Region
+3. Trigger the pipeline and it will build all the infra
 
 
