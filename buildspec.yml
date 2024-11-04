@@ -57,4 +57,3 @@ phases:
 artifacts:
   files:
     - '/codebuild/output/src*/src/devops/terraform/imagedefinitions.json'
-  base-directory: ./  # Ensure this is set correctly
