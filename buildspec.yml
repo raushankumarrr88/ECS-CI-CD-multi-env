@@ -56,6 +56,4 @@ phases:
       - cat imagedefinitions.json
 
 artifacts:
-  files:
-    - imagedefinitions.json
-  base-directory: ./  # Ensure this is set correctly
+    files: imagedefinitions.json
