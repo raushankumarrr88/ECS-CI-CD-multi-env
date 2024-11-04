@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      python: 3.x  # Specify the Python version you need
+      python: 3.x
     commands:
       - echo "this pipeline has the below role"
       - aws sts get-caller-identity
@@ -19,25 +19,24 @@ phases:
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
       - echo "Initializing Terraform"
-      - cd devops/terraform  # Change to the directory containing your Terraform configuration
+      - cd devops/terraform
       - terraform init -backend-config="region=$AWS_DEFAULT_REGION"
       - if [ "$DESTROY_RESOURCES" = "true" ]; then
           echo "Destroying Terraform infrastructure";
           terraform destroy -auto-approve -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID";
         else
           echo "Planning Terraform changes";
-          terraform plan -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID"; 
+          terraform plan -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID";
           echo "Applying Terraform changes";
           terraform apply -auto-approve -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID";
         fi
-      #- terraform destroy -auto-approve -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID"
 
   build:
     commands:
       - echo "Logging in to Amazon ECR"
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - echo "Building Docker image"
-      - cd ../..  # Navigate to the directory containing the Dockerfile
+      - cd ../..
       - docker build -t $ECR_REPOSITORY_NAME:$IMAGE_TAG .
       - cd devops/terraform
       - echo "Tagging Docker image"
@@ -45,16 +44,14 @@ phases:
 
   post_build:
     commands:
-      - echo "Logging in to Amazon ECR"
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - echo "Pushing Docker image to Amazon ECR"
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:$IMAGE_TAG
       - echo "Docker image pushed to ECR successfully"
-      - echo Writing image definitions file...
-      - printf '[{"name":"%s","imageUri":"%s"}]' $DOCKER_CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
-      - cat imagedefinitions.json 
+      - echo "Writing image definitions file"
+      - printf '[{"name":"%s","imageUri":"%s"}]' "$DOCKER_CONTAINER_NAME" "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:$IMAGE_TAG" > imagedefinitions.json
+      - cat imagedefinitions.json
 
 artifacts:
   files:
     - '**/*'
-    - imagedefinitions.json  # Include any other files you want to keep as build artifacts
+    - imagedefinitions.json
