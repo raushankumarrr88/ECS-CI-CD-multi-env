@@ -12,9 +12,3 @@ variable "aws_account_id" {
   description = "This is the account is"
   type = string
 }
-
-# Variable for image tag
-variable "image_tag" {
-  description = "The Docker image tag for each environment"
-  type        = string
-}
