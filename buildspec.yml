@@ -16,6 +16,8 @@ phases:
 
   pre_build:
     commands:
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
       - echo "Initializing Terraform"
       - cd devops/terraform  # Change to the directory containing your Terraform configuration
       - terraform init -backend-config="region=$AWS_DEFAULT_REGION"
@@ -36,17 +38,17 @@ phases:
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - echo "Building Docker image"
       - cd ../..  # Navigate to the directory containing the Dockerfile
-      - docker build -t $ECR_REPOSITORY_NAME:latest .
+      - docker build -t $ECR_REPOSITORY_NAME:$IMAGE_TAG .
       - cd devops/terraform
       - echo "Tagging Docker image"
-      - docker tag $ECR_REPOSITORY_NAME:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:latest
+      - docker tag $ECR_REPOSITORY_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:$IMAGE_TAG
 
   post_build:
     commands:
       - echo "Logging in to Amazon ECR"
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - echo "Pushing Docker image to Amazon ECR"
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:latest
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:$IMAGE_TAG
       - echo "Docker image pushed to ECR successfully"
 
 artifacts:
