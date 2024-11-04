@@ -5,7 +5,7 @@ phases:
     runtime-versions:
       python: 3.x  # Specify the Python version you need
     commands:
-      - echo "This pipeline is running with the following role"
+      - echo "this pipeline has the below role"
       - aws sts get-caller-identity
       - echo "Installing Terraform"
       - curl -LO "https://releases.hashicorp.com/terraform/$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r .current_version)/terraform_$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r .current_version)_linux_amd64.zip"
@@ -19,20 +19,16 @@ phases:
       - echo "Initializing Terraform"
       - cd devops/terraform  # Change to the directory containing your Terraform configuration
       - terraform init -backend-config="region=$AWS_DEFAULT_REGION"
-      # - if [ "$DESTROY_RESOURCES" = "true" ]; then
-      #     echo "Destroying Terraform infrastructure";
-      #     terraform destroy -auto-approve -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID" -var="image_tag=${CODEBUILD_BUILD_ID//:/-}"; # Replace colons with dashes
-      #   else
-      #     echo "Planning Terraform changes";
-      #     terraform plan -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID" -var="image_tag=${CODEBUILD_BUILD_ID//:/-}"; # Replace colons with dashes
-      #     echo "Applying Terraform changes";
-      #     terraform apply -auto-approve -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID" -var="image_tag=${CODEBUILD_BUILD_ID//:/-}"; # Replace colons with dashes
-      #   fi
-      - echo "Planning Terraform changes"
-      - terraform plan -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID" -var="image_tag=${CODEBUILD_BUILD_ID//:/-}" # Replace colons with dashes
-      - echo "Applying Terraform changes"
-      - terraform apply -auto-approve -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID" -var="image_tag=${CODEBUILD_BUILD_ID//:/-}" # Replace colons with dashes
- 
+      - if [ "$DESTROY_RESOURCES" = "true" ]; then
+          echo "Destroying Terraform infrastructure";
+          terraform destroy -auto-approve -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID";
+        else
+          echo "Planning Terraform changes";
+          terraform plan -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID"; 
+          echo "Applying Terraform changes";
+          terraform apply -auto-approve -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID";
+        fi
+      #- terraform destroy -auto-approve -var "aws_region=$AWS_DEFAULT_REGION" -var "ecr_repository_name=$ECR_REPOSITORY_NAME" -var "aws_account_id=$AWS_ACCOUNT_ID"
 
   build:
     commands:
@@ -40,15 +36,17 @@ phases:
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - echo "Building Docker image"
       - cd ../..  # Navigate to the directory containing the Dockerfile
-      - IMAGE_TAG="${CODEBUILD_BUILD_ID//:/-}"  # Replace colons with dashes for the tag
-      - docker build -t $ECR_REPOSITORY_NAME:$IMAGE_TAG .
+      - docker build -t $ECR_REPOSITORY_NAME:latest .
+      - cd devops/terraform
       - echo "Tagging Docker image"
-      - docker tag $ECR_REPOSITORY_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:$IMAGE_TAG
+      - docker tag $ECR_REPOSITORY_NAME:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:latest
 
   post_build:
     commands:
+      - echo "Logging in to Amazon ECR"
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - echo "Pushing Docker image to Amazon ECR"
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:$IMAGE_TAG
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:latest
       - echo "Docker image pushed to ECR successfully"
 
 artifacts:
