@@ -50,7 +50,11 @@ phases:
       - echo "Pushing Docker image to Amazon ECR"
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:$IMAGE_TAG
       - echo "Docker image pushed to ECR successfully"
+      - echo Writing image definitions file...
+      - printf '[{"name":"%s","imageUri":"%s"}]' $DOCKER_CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - cat imagedefinitions.json 
 
 artifacts:
   files:
-    - '**/*'  # Include any other files you want to keep as build artifacts
+    - '**/*'
+    - imagedefinitions.json  # Include any other files you want to keep as build artifacts
