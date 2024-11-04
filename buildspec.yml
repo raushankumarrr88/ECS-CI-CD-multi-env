@@ -53,8 +53,9 @@ phases:
       - echo "Writing image definitions file"
       - printf '[{"name":"dev","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
       - ls -al
+      - cat imagedefinitions.json
 
 artifacts:
   files:
-    - '/codebuild/output/src*/src/devops/terraform/imagedefinitions.json'
+    - imagedefinitions.json
   base-directory: ./  # Ensure this is set correctly
