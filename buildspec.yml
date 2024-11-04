@@ -18,6 +18,8 @@ phases:
     commands:
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
+      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME
+      - echo REPOSITORY_URI
       - echo "Initializing Terraform"
       - cd devops/terraform
       - terraform init -backend-config="region=$AWS_DEFAULT_REGION"
@@ -49,10 +51,8 @@ phases:
       - echo "Docker image pushed to ECR successfully"
       - pwd
       - echo "Writing image definitions file"
-      - printf '[{"name":"%s","imageUri":"%s"}]' "$DOCKER_CONTAINER_NAME" "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:$IMAGE_TAG" > imagedefinitions.json
-      - pwd
+      - printf '[{"name":"dev","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
       - ls -al
-      - cat imagedefinitions.json
 
 artifacts:
   files:
