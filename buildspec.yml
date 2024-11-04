@@ -56,4 +56,4 @@ phases:
 
 artifacts:
   files:
-    - '/*'
+    - '/codebuild/output/src*/src/devops/terraform/imagedefinitions.json'
