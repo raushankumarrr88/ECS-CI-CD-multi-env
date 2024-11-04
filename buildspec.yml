@@ -48,15 +48,11 @@ phases:
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:$IMAGE_TAG
       - echo "Docker image pushed to ECR successfully"
       - pwd
-      - cd /
       - echo "Writing image definitions file"
       - printf '[{"name":"%s","imageUri":"%s"}]' "$DOCKER_CONTAINER_NAME" "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:$IMAGE_TAG" > imagedefinitions.json
       - pwd
       - ls -al
       - cat imagedefinitions.json
-      - whoami
-      - chmod ugo+rwx imagedefinitions.json
 
 artifacts:
-  files:
-    - 'imagedefinitions.json'
+  files: imagedefinitions.json
