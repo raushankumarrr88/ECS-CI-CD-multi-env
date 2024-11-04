@@ -54,6 +54,8 @@ phases:
       - pwd
       - ls -al
       - cat imagedefinitions.json
+      - whoami
+      - chmod ugo+rwx imagedefinitions.json
 
 artifacts:
   files:
