@@ -59,4 +59,4 @@ artifacts:
     commands:
       - pwd
       - ls -al
-    files: imagedefinitions.json
+    # files: imagedefinitions.json
