@@ -32,7 +32,7 @@ resource "aws_ecs_task_definition" "production_task" {
   container_definitions = jsonencode([  
     {
       name         = "production-container"
-      image        = "${var.aws_account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.ecr_repository_name}:${var.image_tag}"  # Updated to use image_tag
+      image        = "${var.aws_account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.ecr_repository_name}:latest"  # Updated to use image_tag
       essential    = true
       portMappings = [
         {
@@ -86,7 +86,7 @@ resource "aws_ecs_task_definition" "staging_task" {
   container_definitions = jsonencode([
     {
       name         = "staging-container"
-      image        = "${var.aws_account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.ecr_repository_name}:${var.image_tag}"  # Updated to use image_tag
+      image        = "${var.aws_account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.ecr_repository_name}:latest"  # Updated to use image_tag
       essential    = true
       portMappings = [
         {
@@ -111,7 +111,7 @@ resource "aws_ecs_task_definition" "dev_task" {
   container_definitions = jsonencode([
     {
       name         = "dev-container"
-      image        = "${var.aws_account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.ecr_repository_name}:${var.image_tag}"  # Updated to use image_tag
+      image        = "${var.aws_account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${var.ecr_repository_name}:latest"  # Updated to use image_tag
       essential    = true
       portMappings = [
         {
