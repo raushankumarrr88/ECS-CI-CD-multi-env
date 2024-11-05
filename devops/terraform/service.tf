@@ -5,6 +5,7 @@ resource "aws_ecs_service" "production_service" {
   task_definition = aws_ecs_task_definition.production_task.arn
   desired_count   = 1
   launch_type     = "FARGATE"
+  force_new_deployment = false
 
   network_configuration {
     subnets          = [aws_subnet.production_subnet_1.id, aws_subnet.production_subnet_2.id]  
@@ -17,6 +18,9 @@ resource "aws_ecs_service" "production_service" {
     container_name   = "micros1"
     container_port   = 80
   }
+  lifecycle {
+    ignore_changes = [task_definition]
+  }
 }
 
 
@@ -27,6 +31,7 @@ resource "aws_ecs_service" "staging_service" {
   task_definition = aws_ecs_task_definition.staging_task.arn
   desired_count   = 1
   launch_type     = "FARGATE"
+  force_new_deployment = false
 
   network_configuration {
     subnets          = [aws_subnet.staging_subnet_1.id, aws_subnet.staging_subnet_2.id]
@@ -38,6 +43,9 @@ resource "aws_ecs_service" "staging_service" {
     target_group_arn = aws_lb_target_group.staging_tg.arn
     container_name   = "micros1"
     container_port   = 80
+  }
+  lifecycle {
+    ignore_changes = [task_definition]
   }
 }
 
@@ -51,6 +59,7 @@ resource "aws_ecs_service" "dev_service" {
   task_definition = aws_ecs_task_definition.dev_task.arn
   desired_count   = 1
   launch_type     = "FARGATE"
+  force_new_deployment = false
 
   network_configuration {
     subnets          = [aws_subnet.dev_subnet_1.id, aws_subnet.dev_subnet_2.id]
@@ -61,5 +70,8 @@ resource "aws_ecs_service" "dev_service" {
     target_group_arn = aws_lb_target_group.dev_tg.arn
     container_name   = "micros1"
     container_port   = 80
+  }
+  lifecycle {
+    ignore_changes = [task_definition]
   }
 }

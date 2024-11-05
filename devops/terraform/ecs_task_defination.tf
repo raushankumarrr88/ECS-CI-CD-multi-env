@@ -73,11 +73,6 @@ resource "aws_ecs_task_definition" "production_task-2" {
   memory                   = "512"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-
-
-  lifecycle {
-    ignore_changes = [container_definitions]  # Ignore image updates in container_definitions
-  }
 }
 
 
@@ -107,10 +102,6 @@ resource "aws_ecs_task_definition" "staging_task" {
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
 
-
-  lifecycle {
-    ignore_changes = [container_definitions]  # Ignore image updates in container_definitions
-  }
 }
 
 # ECS Task Definition for Dev
@@ -136,8 +127,4 @@ resource "aws_ecs_task_definition" "dev_task" {
   memory                   = "512"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-
-  lifecycle {
-    ignore_changes = [container_definitions]  # Ignore image updates in container_definitions
-  }
 }
