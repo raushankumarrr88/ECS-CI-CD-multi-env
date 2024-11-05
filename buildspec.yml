@@ -50,7 +50,7 @@ phases:
       - pwd
       - cd ../..
       - echo "Writing image definitions file"
-      - printf '[{"name":"dev-container","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - printf '[{"name":"micros1","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
       - echo "Image definitions file created at imagedefinitions.json"
 artifacts:
   files:
