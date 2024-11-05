@@ -49,9 +49,11 @@ phases:
       - echo "Docker image pushed to ECR successfully"
       - pwd
       - echo "Writing image definitions file"
-      - printf '[{"name":"dev","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - printf '[{"name":"dev","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > ./imagedefinitions.json
       - ls -al
-      - cat imagedefinitions.json
+      - cat ./imagedefinitions.json
 
 artifacts:
-    files: imagedefinitions.json
+  files:
+    - ./imagedefinitions.json
+  base-directory: .
