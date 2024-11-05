@@ -14,7 +14,7 @@ resource "aws_ecs_service" "production_service" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.production_tg.arn
-    container_name   = "production-container"
+    container_name   = "micros1"
     container_port   = 80
   }
 }
@@ -36,7 +36,7 @@ resource "aws_ecs_service" "staging_service" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.staging_tg.arn
-    container_name   = "staging-container"
+    container_name   = "micros1"
     container_port   = 80
   }
 }
@@ -59,7 +59,7 @@ resource "aws_ecs_service" "dev_service" {
   }
   load_balancer {
     target_group_arn = aws_lb_target_group.dev_tg.arn
-    container_name   = "dev-container"
+    container_name   = "micros1"
     container_port   = 80
   }
 }
