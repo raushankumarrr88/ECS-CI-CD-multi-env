@@ -52,7 +52,7 @@ resource "aws_ecs_task_definition" "production_task" {
 
 # ECS Task Definition for Production
 resource "aws_ecs_task_definition" "production_task-2" {
-  family                   = "production-task"
+  family                   = "production-task-2"
   execution_role_arn      = aws_iam_role.ecs_task_execution_role.arn
 
   container_definitions = jsonencode([  
@@ -73,6 +73,11 @@ resource "aws_ecs_task_definition" "production_task-2" {
   memory                   = "512"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
+
+
+  lifecycle {
+    ignore_changes = [container_definitions]  # Ignore image updates in container_definitions
+  }
 }
 
 
@@ -101,6 +106,11 @@ resource "aws_ecs_task_definition" "staging_task" {
   memory                   = "512"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
+
+
+  lifecycle {
+    ignore_changes = [container_definitions]  # Ignore image updates in container_definitions
+  }
 }
 
 # ECS Task Definition for Dev
@@ -126,4 +136,8 @@ resource "aws_ecs_task_definition" "dev_task" {
   memory                   = "512"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
+
+  lifecycle {
+    ignore_changes = [container_definitions]  # Ignore image updates in container_definitions
+  }
 }
