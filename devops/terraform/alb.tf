@@ -51,14 +51,6 @@ resource "aws_lb_target_group" "dev_tg" {
   vpc_id      = aws_vpc.dev_vpc.id
   target_type = "ip"
 }
-# Target Group for Dev
-resource "aws_lb_target_group" "dev_tg-2" {
-  name        = "dev-tg-2"
-  port        = 80
-  protocol    = "HTTP"
-  vpc_id      = aws_vpc.dev_vpc.id
-  target_type = "ip"
-}
 
 # Listener for Production ALB on port 80
 resource "aws_lb_listener" "production_http_listener" {
@@ -150,22 +142,6 @@ resource "aws_lb_listener_rule" "dev_listener_rule" {
   action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.dev_tg.arn
-  }
-
-  condition {
-    path_pattern {
-      values = ["/*"]
-    }
-  }
-}
-# Listener Rule for Dev
-resource "aws_lb_listener_rule" "dev_2-listener_rule" {
-  listener_arn = aws_lb_listener.dev_http_listener.arn
-  priority     = 400  # Unique priority for Dev
-
-  action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.dev_tg-2.arn
   }
 
   condition {

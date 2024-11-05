@@ -75,28 +75,3 @@ resource "aws_ecs_service" "dev_service" {
     ignore_changes = [task_definition]
   }
 }
-
-
-# ECS Service for dev
-resource "aws_ecs_service" "dev_service-2" {
-  name            = "dev-service-2"
-  cluster         = aws_ecs_cluster.dev_cluster.id
-  task_definition = aws_ecs_task_definition.dev_task.arn
-  desired_count   = 1
-  launch_type     = "FARGATE"
-  force_new_deployment = false
-
-  network_configuration {
-    subnets          = [aws_subnet.dev_subnet_1.id, aws_subnet.dev_subnet_2.id]
-    security_groups  = [aws_security_group.dev_sg.id]
-    assign_public_ip = true
-  }
-  load_balancer {
-    target_group_arn = aws_lb_target_group.dev_tg-2.arn
-    container_name   = "micros2"
-    container_port   = 80
-  }
-  lifecycle {
-    ignore_changes = [task_definition]
-  }
-}

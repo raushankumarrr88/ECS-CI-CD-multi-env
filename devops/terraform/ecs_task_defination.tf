@@ -130,27 +130,3 @@ resource "aws_ecs_task_definition" "dev_task" {
 }
 
 
-# ECS Task Definition for Dev
-resource "aws_ecs_task_definition" "dev_task-2" {
-  family                   = "dev-task-2"
-  execution_role_arn      = aws_iam_role.ecs_task_execution_role.arn
-
-  container_definitions = jsonencode([
-    {
-      name         = "micros2"
-      image        = "nginx:latest"  # Updated to use image_tag
-      essential    = true
-      portMappings = [
-        {
-          containerPort = 80
-          hostPort      = 80
-        },
-      ]
-    },
-  ])
-  
-  cpu                      = "256"
-  memory                   = "512"
-  network_mode             = "awsvpc"
-  requires_compatibilities = ["FARGATE"]
-}
