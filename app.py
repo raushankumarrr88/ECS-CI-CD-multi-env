@@ -16,7 +16,7 @@ def get_ecs_metadata():
 
 @app.route('/')
 def hello():
-    return "Hello, World!"
+    return "Hello, World! this is autometed pipeline with build no 6"
 
 @app.route('/demo')
 def demo():
