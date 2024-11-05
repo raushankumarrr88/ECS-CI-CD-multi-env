@@ -52,7 +52,7 @@ resource "aws_lb_target_group" "dev_tg" {
   target_type = "ip"
 }
 # Target Group for Dev
-resource "aws_lb_target_group" "dev_tg" {
+resource "aws_lb_target_group" "dev_tg-2" {
   name        = "dev-tg-2"
   port        = 80
   protocol    = "HTTP"
