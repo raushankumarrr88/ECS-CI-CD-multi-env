@@ -1,15 +1,8 @@
-import requests
 from flask import Flask, jsonify
 
-app = Flask(__name__)
-
-@app.route('/micros1')
+@app.route('/micros1/')
 def hello():
-    return "Hello, World!"
-
-@app.route('/micros1/demo')
-def demo():
-    return "Hello, World! This is from demo endpoint"
+    return "Hello, World! from route"
 
 
 if __name__ == '__main__':
