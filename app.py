@@ -16,13 +16,17 @@ def get_ecs_metadata():
 
 @app.route('/')
 def hello():
-    return "Hello, World! added a new docker in dev"
+    return "Hello, World!  Welcome to the home page This is only for health check"
 
 @app.route('/demo/raushan')
 def demo():
     return "Hello, raushan! This is from demo endpoint"
 
-@app.route('/metadata')
+@app.route('/demo/happy')
+def demo():
+    return "Hello, It worked"
+
+@app.route('/demo/metadata')
 def metadata():
     ecs_metadata = get_ecs_metadata()
     return jsonify(ecs_metadata)

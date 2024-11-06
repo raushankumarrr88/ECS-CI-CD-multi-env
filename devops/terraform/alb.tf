@@ -146,7 +146,7 @@ resource "aws_lb_listener_rule" "dev_listener_rule" {
 
   condition {
     path_pattern {
-      values = ["/*"]
+      values = ["/demo/*"]
     }
   }
 }
