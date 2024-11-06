@@ -112,7 +112,7 @@ resource "aws_lb_listener_rule" "production_listener_rule" {
 
   condition {
     path_pattern {
-      values = ["/micros1/*"]
+      values = ["/*"]
     }
   }
 }
@@ -129,7 +129,7 @@ resource "aws_lb_listener_rule" "staging_listener_rule" {
 
   condition {
     path_pattern {
-      values = ["/micros1/*"]
+      values = ["/*"]
     }
   }
 }
@@ -146,7 +146,7 @@ resource "aws_lb_listener_rule" "dev_listener_rule" {
 
   condition {
     path_pattern {
-      values = ["/micros1/*"]
+      values = ["/*"]
     }
   }
 }
