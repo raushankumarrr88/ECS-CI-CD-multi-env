@@ -18,9 +18,9 @@ def get_ecs_metadata():
 def hello():
     return "Hello, World! added a new docker in dev"
 
-@app.route('/demo')
+@app.route('/demo/raushan')
 def demo():
-    return "Hello, World! This is from demo endpoint"
+    return "Hello, raushan! This is from demo endpoint"
 
 @app.route('/metadata')
 def metadata():
